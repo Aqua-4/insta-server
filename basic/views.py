@@ -1,7 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-import os
 from django.conf import settings
+
+import os
+import psutil
+import sys
+from subprocess import Popen
 
 
 def logfile(request):
@@ -18,13 +22,16 @@ def testlog(request):
 
 
 def bool_running(request):
-    # need json response
-    import psutil
-    import sys
-    from subprocess import Popen
 
+    # need json response
+    process_name = "tmp.py"
+
+    flag = False
     for process in psutil.process_iter():
-        if process.cmdline() == ['python', 'your_script.py']:
-            return True
-        else:
-            return False
+        # check if python process & then check if process name == filename
+        if process.name() == 'python' and process_name in process.cmdline()[1]:
+            print(process)
+            print(process.cmdline())
+            flag = True
+            break
+    return HttpResponse(flag)
