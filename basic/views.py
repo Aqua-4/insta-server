@@ -6,11 +6,13 @@ import os
 import psutil
 import sys
 from subprocess import Popen
+from django.shortcuts import render
 
 
-def logfile(request):
-
-    return HttpResponse("Hello Welcome")
+def geeks_view(request):
+    # render function takes argument  - request
+    # and return HTML as response
+    return render(request, "templates/index.html")
 
 
 def testlog(request):
