@@ -7,6 +7,8 @@ import psutil
 import sys
 from subprocess import Popen
 from django.shortcuts import render
+from rest_framework.views import APIView
+from django.http import JsonResponse
 
 
 def geeks_view(request):
@@ -24,10 +26,7 @@ def testlog(request):
 
 
 def bool_running(request):
-
-    # need json response
-    process_name = "tmp.py"
-
+    process_name = request.GET.get('file_name', "tmp.py")
     flag = False
     for process in psutil.process_iter():
         # check if python process & then check if process name == filename
@@ -36,4 +35,4 @@ def bool_running(request):
             print(process.cmdline())
             flag = True
             break
-    return HttpResponse(flag)
+    return JsonResponse({'status': flag})
