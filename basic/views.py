@@ -18,15 +18,24 @@ def geeks_view(request):
 
 
 def testlog(request):
+    file_map = {
+        "dm_report_gen.py": "dm_log",
+        "db_refresh.py": "refresh_log",
+        "start_bot.py": "auto_insta.log"}
+
+    f_name = file_map.get(request.GET.get('file_name'))
+    f_path = os.path.join("..", "auto-insta", f_name)
 
     # orignal path, DO NO DELETE
     # file_ = open(os.path.join("..", "auto-insta", "auto_insta.log"))
-    file_ = open(os.path.join("auto_insta.log"))
-    return HttpResponse(file_)
+    # file_ = open(os.path.abspath(f_path))
+    file_ = open(f_path)
+    # return HttpResponse(file_)
+    return JsonResponse({'data': file_.readlines()})
 
 
 def bool_running(request):
-    process_name = request.GET.get('file_name', "tmp.py")
+    process_name = request.GET.get('file_name')
     flag = False
     for process in psutil.process_iter():
         # check if python process & then check if process name == filename

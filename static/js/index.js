@@ -1,4 +1,10 @@
 
+const file_map = {
+  "#dm_gen": "dm_report_gen.py",
+  "#db_refresh": "db_refresh.py",
+  "#auto_insta": "start_bot.py",
+}
+
 $('body')
   .tooltip({
     selector: '[data-toggle="tooltip"]',
@@ -9,6 +15,11 @@ $('body')
     boundary: 'window',
     // trigger: "click focus",
     delay: { "show": 100, "hide": 3000 }
+  })
+  .on("click", "button.btn-script", function () {
+    let selector = "#" + $(this).attr("id")
+    let file_name = file_map[selector]
+    log_text(file_name)
   })
 
 let tab = parse_url().searchKey.tab || "home"
@@ -30,6 +41,23 @@ function redraw() {
   tab_map[tab]()
 }
 
+
+function log_text(file_name) {
+  $.ajax({
+    url: "log",
+    method: "GET",
+    dataType: 'json',
+    data: { file_name: file_name }
+  })
+    .done(function (data) {
+      $("#log_placeholder").text(data.data)
+      Prism.highlightAll();
+    })
+    .fail(function () {
+      $("#log_placeholder").text("No Data")
+      Prism.highlightAll();
+    })
+}
 
 function ajax_call(url_hit, method = 'GET', bool_async = true) {
   // use get_ajax_call.done(function(data){  <code> })
@@ -55,12 +83,7 @@ function update_url(obj) {
 
 function plot_home() {
 
-  let file_map = {
-    "#dm_gen": "dm_gen.py",
-    "#db_refresh": "db_refresh.py",
-    "#auto_insta": "start_bot.py",
-  }
-
+  // iterate through file map and check while  file is running
   _.each(file_map, function (file_name, id) {
     $.ajax({
       url: "chkrun",
@@ -76,8 +99,8 @@ function plot_home() {
         console.log(data);
 
       })
-
   })
+
 }
 
 
