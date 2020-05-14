@@ -31,7 +31,7 @@ def testlog(request):
     # file_ = open(os.path.abspath(f_path))
     file_ = open(f_path)
     # return HttpResponse(file_)
-    return JsonResponse({'data': file_.readlines()})
+    return JsonResponse({'data': file_.readlines()[-100:]})
 
 
 def bool_running(request):
