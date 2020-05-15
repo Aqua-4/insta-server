@@ -39,7 +39,7 @@ def bool_running(request):
     flag = False
     for process in psutil.process_iter():
         # check if python process & then check if process name == filename
-        if process.name() == 'python' and process_name in process.cmdline()[1]:
+        if (process.name() == 'python' or process.name() == 'python3') and process_name in process.cmdline()[1]:
             print(process)
             print(process.cmdline())
             flag = True
