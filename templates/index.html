@@ -25,10 +25,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="/instaserver/?tab=info">Info </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="/instaserver/?tab=chart">Chart</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -52,7 +52,7 @@
 
 
   <div class="container-fluid">
-    <div class="my-2 d-flex justify-content-around">
+    <div class="btn-container my-2 d-flex justify-content-around">
 
       <button class="btn btn-script" id="dm_gen">dm-gen</button>
       <button class="btn btn-script" id="db_refresh">db-refresh</button>
@@ -61,14 +61,17 @@
     </div>
 
     <div class="log-container">
-
       <pre>
         <code class="language-clike line-numbers-rows" id="log_placeholder">
           Sample text
         </code>
       </pre>
-
     </div>
+
+    <div class="img-container d-flex justify-content-center">
+      <img id="visual" alt="chart">
+    </div>
+
   </div>
 
   <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>

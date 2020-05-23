@@ -22,8 +22,11 @@ $('body')
     log_text(file_name)
   })
 
-let tab = parse_url().searchKey.tab || "home"
-
+let tab = parse_url().searchKey.tab || "info"
+const tab_map = {
+  info: plot_info,
+  chart: plot_chart
+}
 
 $(window).on('load', function () {
   redraw()
@@ -31,10 +34,6 @@ $(window).on('load', function () {
 
 function redraw() {
   $('[data-toggle="tooltip"]').tooltip('hide')
-  const tab_map = {
-    home: plot_home,
-    log: plot_log
-  }
 
   $(".loader").removeClass("d-none");
   // funky way to execute stuff
@@ -81,8 +80,8 @@ function update_url(obj) {
 
 // _________________________plot functions__________________________
 
-function plot_home() {
-
+function plot_info() {
+  // update button color if script is running
   // iterate through file map and check while  file is running
   _.each(file_map, function (file_name, id) {
     $.ajax({
@@ -97,13 +96,21 @@ function plot_home() {
         else
           $(id).addClass("btn-outline-danger")
         console.log(data);
-
       })
   })
 
 }
 
-
-function plot_log() {
-  console.log("log")
+function plot_chart() {
+  // script_status()
+  $(".log-container, .btn-container").remove()
+  $.ajax({
+    url: "get_visual",
+    method: "GET",
+    dataType: 'json',
+    // data: { file_name: file_name }
+  })
+    .done(function (data) {
+      $("#visual").attr("src", data.img)
+    })
 }

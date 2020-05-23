@@ -9,6 +9,12 @@ from subprocess import Popen
 from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http import JsonResponse
+import sqlite3
+import pandas as pd
+import matplotlib.pyplot as plt
+import io
+import base64
+from io import BytesIO
 
 
 def geeks_view(request):
@@ -45,3 +51,27 @@ def bool_running(request):
             flag = True
             break
     return JsonResponse({'status': flag})
+
+
+def get_visual(request):
+    f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
+
+    # db_df = pd.read_sql("select * from instaDb", db_conn)
+    # bot_df = pd.read_sql("select * from instaDb where bot_lead=1", db_conn)
+    # bot_fb_df = pd.read_sql(
+    #     "select * from instaDb where bot_lead=1  AND followers=1", db_conn)
+    db_conn = sqlite3.connect(f_path)
+    bot_foll_df = pd.read_sql(
+        "select * from instaDb where bot_lead=1 AND following=1 AND acc_status=1", db_conn)
+    hash_df = bot_foll_df.groupby(['hash_tag'], as_index=False).sum()
+    hash_df.sort_values("followers", ascending=False, inplace=True)
+    hash_df.plot(title="Most Followed hashtags", kind='bar',
+                 x='hash_tag', y='followers')
+    # plt.show()
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+
+    pngImageB64String = "data:image/png;base64,"
+    pngImageB64String += base64.b64encode(figfile.getvalue()).decode('utf8')
+
+    return JsonResponse({'img': pngImageB64String})
