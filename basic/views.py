@@ -16,6 +16,8 @@ import io
 import base64
 from io import BytesIO
 
+def home_view(request):
+    return "Hello World!"
 
 def geeks_view(request):
     # render function takes argument  - request

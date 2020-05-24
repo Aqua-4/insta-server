@@ -24,53 +24,20 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
+        <li id="nav_info" class="nav-item">
           <a class="nav-link" href="/instaserver/?tab=info">Info </a>
         </li>
-        <li class="nav-item">
+        <li id="nav_chart" class="nav-item">
           <a class="nav-link" href="/instaserver/?tab=chart">Chart</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-            aria-haspopup="true" aria-expanded="false">
-            Dropdown
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li>
+
       </ul>
 
     </div>
   </nav>
 
 
-  <div class="container-fluid">
-    <div class="btn-container my-2 d-flex justify-content-around">
-
-      <button class="btn btn-script" id="dm_gen">dm-gen</button>
-      <button class="btn btn-script" id="db_refresh">db-refresh</button>
-      <button class="btn btn-script" id="auto_insta">auto-insta</button>
-
-    </div>
-
-    <div class="log-container">
-      <pre>
-        <code class="language-clike line-numbers-rows" id="log_placeholder">
-          Sample text
-        </code>
-      </pre>
-    </div>
-
-    <div class="img-container d-flex justify-content-center">
-      <img id="visual" alt="chart">
-    </div>
+  <div id="main_placeholder" class="container-fluid">
 
   </div>
 
@@ -81,6 +48,10 @@
   <script src="{% static 'node_modules/g1/dist/g1.min.js' %}"></script>
   <script src="{% static 'node_modules/prismjs/prism.js' %}"></script>
   <script src="{% static 'js/index.js' %}"></script>
+
+  <!-- g1 templates -->
+  <script type="text/html" src="{% static 'g1_templates/log.html' %}" id="log_template"></script>
+  <script type="text/html" src="{% static 'g1_templates/visual.html' %}" id="visual_template"></script>
 </body>
 
 </html>

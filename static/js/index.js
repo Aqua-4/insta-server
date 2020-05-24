@@ -38,6 +38,7 @@ function redraw() {
   $(".loader").removeClass("d-none");
   // funky way to execute stuff
   tab_map[tab]()
+  $(`#nav_${tab}`).addClass("active")
 }
 
 
@@ -78,9 +79,7 @@ function update_url(obj) {
   history.pushState({}, '', '?' + url.search);
 }
 
-// _________________________plot functions__________________________
-
-function plot_info() {
+function update_btn_color() {
   // update button color if script is running
   // iterate through file map and check while  file is running
   _.each(file_map, function (file_name, id) {
@@ -95,22 +94,34 @@ function plot_info() {
           $(id).addClass("btn-outline-success")
         else
           $(id).addClass("btn-outline-danger")
-        console.log(data);
       })
   })
+  Prism.highlightAll();
+}
 
+// _________________________plot functions__________________________
+
+function plot_info() {
+  $('#log_template')
+    .one('template', function () {
+      update_btn_color()
+    })
+    .template({ target: "#main_placeholder" })
 }
 
 function plot_chart() {
   // script_status()
-  $(".log-container, .btn-container").remove()
-  $.ajax({
-    url: "get_visual",
-    method: "GET",
-    dataType: 'json',
-    // data: { file_name: file_name }
-  })
-    .done(function (data) {
-      $("#visual").attr("src", data.img)
+  $('#visual_template')
+    .one('template', function () {
+      $.ajax({
+        url: "get_visual",
+        method: "GET",
+        dataType: 'json',
+        // data: { file_name: file_name }
+      })
+        .done(function (data) {
+          $("#visual").attr("src", data.img)
+        })
     })
+    .template({ target: "#main_placeholder" })
 }

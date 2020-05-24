@@ -16,8 +16,3 @@
     height: 75vh;
     overflow-y: auto;
 }
-
-#visual {
-    object-fit: scale-down;
-    
-}
