@@ -11,13 +11,24 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 import sqlite3
 import pandas as pd
-import matplotlib.pyplot as plt
 import io
 import base64
 from io import BytesIO
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-paper')
+
+
+# seaborn-darkgrid
+# ggplot
+# seaborn
+# seaborn-paper
+# seaborn-notebook
+# Solarize_Light2
+
 
 def home_view(request):
     return "Hello World!"
+
 
 def geeks_view(request):
     # render function takes argument  - request
@@ -58,10 +69,6 @@ def bool_running(request):
 def get_visual(request):
     f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
 
-    # db_df = pd.read_sql("select * from instaDb", db_conn)
-    # bot_df = pd.read_sql("select * from instaDb where bot_lead=1", db_conn)
-    # bot_fb_df = pd.read_sql(
-    #     "select * from instaDb where bot_lead=1  AND followers=1", db_conn)
     db_conn = sqlite3.connect(f_path)
     bot_foll_df = pd.read_sql(
         "select * from instaDb where bot_lead=1 AND following=1 AND acc_status=1", db_conn)
@@ -70,6 +77,42 @@ def get_visual(request):
     hash_df.plot(title="Most Followed hashtags", kind='bar',
                  x='hash_tag', y='followers')
     # plt.show()
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+
+    pngImageB64String = "data:image/png;base64,"
+    pngImageB64String += base64.b64encode(figfile.getvalue()).decode('utf8')
+
+    return JsonResponse({'img': pngImageB64String})
+
+
+def get_calendar_dates(request):
+    f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
+    db_conn = sqlite3.connect(f_path)
+    log_df = pd.read_sql(f"""select session_start from smartlog """, db_conn)
+    log_df['session_start'] = pd.to_datetime(
+        log_df['session_start']).dt.strftime("%Y-%m-%d")
+    dates = list(log_df['session_start'].unique())
+    min = log_df['session_start'].min()
+    max = log_df['session_start'].max()
+    return JsonResponse({'dates': dates, 'min': min, 'max': max})
+
+
+def get_smart_log(request):
+    f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
+    db_conn = sqlite3.connect(f_path)
+    date = request.GET.get('date', '2020-05-22')
+
+    log_df = pd.read_sql(f"""select * from smartlog
+                        where session_start LIKE '{date}%'
+                        """, db_conn)
+
+    log_df['session_start'] = pd.to_datetime(
+        log_df['session_start']).dt.strftime("%H:%m %p")
+
+    log_df.plot(title="Most Followed hashtags", kind='bar', x='session_start',
+                y=['delta_followers_cnt', 'delta_following_cnt'], rot=0)
+
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
 

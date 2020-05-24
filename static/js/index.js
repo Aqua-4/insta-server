@@ -25,7 +25,8 @@ $('body')
 let tab = parse_url().searchKey.tab || "info"
 const tab_map = {
   info: plot_info,
-  chart: plot_chart
+  chart: plot_chart,
+  smart_log: plot_smart_log
 }
 
 $(window).on('load', function () {
@@ -122,6 +123,55 @@ function plot_chart() {
         .done(function (data) {
           $("#visual").attr("src", data.img)
         })
+    })
+    .template({ target: "#main_placeholder" })
+}
+
+function plot_smart_log() {
+  $('#smart_log_template')
+    .one('template', function () {
+      $.ajax({
+        url: "get_smart_log",
+        method: "GET",
+        dataType: 'json',
+        // data: { file_name: file_name }
+      })
+        .done(function (data) {
+          $("#visual").attr("src", data.img)
+        })
+
+      $.ajax({
+        url: "get_calendar_dates",
+        method: "GET",
+        dataType: 'json',
+        // data: { file_name: file_name }
+      })
+        .done(function (cal) {
+          let available_dates = cal.dates
+
+
+
+          // date picker
+          $('#datepicker').datepicker({
+            format: 'yyyy/mm/dd',
+            beforeShowDay: function (date) {
+              return {
+                enabled: _.includes(available_dates, moment(date).format('YYYY-MM-DD'))
+              }
+            },
+            todayBtn: true,
+            todayHighlight: true,
+            startDate: cal.min,
+            endDate: cal.max,
+            defaultViewDate: cal.max
+          });
+
+        })
+
+
+
+
+
     })
     .template({ target: "#main_placeholder" })
 }
