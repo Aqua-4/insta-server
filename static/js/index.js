@@ -21,6 +21,13 @@ $('body')
     let file_name = file_map[selector]
     log_text(file_name)
   })
+  .on("changeDate", "#datepicker", function () {
+    console.log("changed");
+    let date = $(this).datepicker('getDate');
+    date = moment(date).format('YYYY-MM-DD')
+    get_smart_chart(date)
+    $(this).datepicker('hide');
+  })
 
 let tab = parse_url().searchKey.tab || "info"
 const tab_map = {
@@ -100,6 +107,19 @@ function update_btn_color() {
   Prism.highlightAll();
 }
 
+
+function get_smart_chart(date) {
+  $.ajax({
+    url: "get_smart_log",
+    method: "GET",
+    dataType: 'json',
+    data: { date: date }
+  })
+    .done(function (data) {
+      $("#visual").attr("src", data.img)
+    })
+
+}
 // _________________________plot functions__________________________
 
 function plot_info() {
@@ -130,15 +150,6 @@ function plot_chart() {
 function plot_smart_log() {
   $('#smart_log_template')
     .one('template', function () {
-      $.ajax({
-        url: "get_smart_log",
-        method: "GET",
-        dataType: 'json',
-        // data: { file_name: file_name }
-      })
-        .done(function (data) {
-          $("#visual").attr("src", data.img)
-        })
 
       $.ajax({
         url: "get_calendar_dates",
@@ -148,8 +159,6 @@ function plot_smart_log() {
       })
         .done(function (cal) {
           let available_dates = cal.dates
-
-
 
           // date picker
           $('#datepicker').datepicker({

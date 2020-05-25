@@ -76,6 +76,8 @@ def get_visual(request):
     hash_df.sort_values("followers", ascending=False, inplace=True)
     hash_df.plot(title="Most Followed hashtags", kind='bar',
                  x='hash_tag', y='followers')
+    plt.tight_layout()
+
     # plt.show()
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
@@ -112,6 +114,7 @@ def get_smart_log(request):
 
     log_df.plot(title="Most Followed hashtags", kind='bar', x='session_start',
                 y=['delta_followers_cnt', 'delta_following_cnt'], rot=0)
+    plt.tight_layout()
 
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
