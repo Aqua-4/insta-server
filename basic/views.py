@@ -15,7 +15,7 @@ import io
 import base64
 from io import BytesIO
 import matplotlib.pyplot as plt
-plt.style.use('seaborn-paper')
+plt.style.use('ggplot')
 
 """
 pretty awesome styles
