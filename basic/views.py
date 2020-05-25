@@ -17,13 +17,15 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 plt.style.use('seaborn-paper')
 
-
+"""
+pretty awesome styles
 # seaborn-darkgrid
 # ggplot
 # seaborn
 # seaborn-paper
 # seaborn-notebook
 # Solarize_Light2
+"""
 
 
 def home_view(request):
