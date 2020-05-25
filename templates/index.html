@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Insta Server</title>
   {% load static %}
+  <link rel="icon" href="{% static 'img/logo.svg' %}">
   <link rel="stylesheet" href="{% static 'node_modules/bootstrap/dist/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css' %}">
   <link rel="stylesheet" href="{% static 'node_modules/prismjs/themes/prism-twilight.css' %}">
@@ -16,7 +17,10 @@
 <body>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="/instaserver/">Insta Server</a>
+    <a class="navbar-brand" href="/instaserver/">
+      <img src="{% static 'img/logo.svg' %}" width="25" height="25" alt="insta">
+      <img src="{% static 'img/pi-logo.svg' %}" width="25" height="25" alt="pi">
+    </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
