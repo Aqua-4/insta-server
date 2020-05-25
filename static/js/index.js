@@ -154,8 +154,8 @@ function make_calendar() {
         defaultViewDate: cal.max
       });
 
-      $("#prev_date").attr("data-date", cal.min)
-      $("#next_date").attr("date-date", cal.max)
+      $("#prev_date").data("date", cal.min)
+      $("#next_date").data("date", cal.max)
 
     })
 

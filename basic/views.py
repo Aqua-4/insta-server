@@ -114,7 +114,7 @@ def get_smart_log(request):
     log_df['session_start'] = pd.to_datetime(
         log_df['session_start']).dt.strftime("%I:%m %p")
 
-    log_df.plot(title="Most Followed hashtags", kind='bar', x='session_start',
+    log_df.plot(title="Smart Log", kind='bar', x='session_start',
                 y=['delta_followers_cnt', 'delta_following_cnt'], rot=15)
     plt.tight_layout()
 
