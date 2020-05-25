@@ -4,6 +4,7 @@ const file_map = {
   "#db_refresh": "db_refresh.py",
   "#auto_insta": "start_bot.py",
 }
+let available_dates = []
 
 $('body')
   .tooltip({
@@ -22,11 +23,19 @@ $('body')
     log_text(file_name)
   })
   .on("changeDate", "#datepicker", function () {
-    console.log("changed");
     let date = $(this).datepicker('getDate');
     date = moment(date).format('YYYY-MM-DD')
     get_smart_chart(date)
     $(this).datepicker('hide');
+
+    let idx = _.indexOf(available_dates, date) || 0
+    $("#prev_date").data("date", available_dates[idx - 1])
+    $("#next_date").data("date", available_dates[idx + 1])
+  })
+  .on("click", "button.date-btn", function () {
+    let date = $(this).data("date")
+    $('#datepicker').datepicker('update', date);
+    $('#datepicker').datepicker('setDate', date);
   })
 
 let tab = parse_url().searchKey.tab || "info"
@@ -120,6 +129,38 @@ function get_smart_chart(date) {
     })
 
 }
+
+function make_calendar() {
+  $.ajax({
+    url: "get_calendar_dates",
+    method: "GET",
+    dataType: 'json',
+  })
+    .done(function (cal) {
+      available_dates = cal.dates
+
+      // date picker
+      $('#datepicker').datepicker({
+        format: 'yyyy/mm/dd',
+        beforeShowDay: function (date) {
+          return {
+            enabled: _.includes(available_dates, moment(date).format('YYYY-MM-DD'))
+          }
+        },
+        todayBtn: true,
+        todayHighlight: true,
+        startDate: cal.min,
+        endDate: cal.max,
+        defaultViewDate: cal.max
+      });
+
+      $("#prev_date").attr("data-date", cal.min)
+      $("#next_date").attr("date-date", cal.max)
+
+    })
+
+}
+
 // _________________________plot functions__________________________
 
 function plot_info() {
@@ -150,37 +191,7 @@ function plot_chart() {
 function plot_smart_log() {
   $('#smart_log_template')
     .one('template', function () {
-
-      $.ajax({
-        url: "get_calendar_dates",
-        method: "GET",
-        dataType: 'json',
-        // data: { file_name: file_name }
-      })
-        .done(function (cal) {
-          let available_dates = cal.dates
-
-          // date picker
-          $('#datepicker').datepicker({
-            format: 'yyyy/mm/dd',
-            beforeShowDay: function (date) {
-              return {
-                enabled: _.includes(available_dates, moment(date).format('YYYY-MM-DD'))
-              }
-            },
-            todayBtn: true,
-            todayHighlight: true,
-            startDate: cal.min,
-            endDate: cal.max,
-            defaultViewDate: cal.max
-          });
-
-        })
-
-
-
-
-
+      make_calendar()
     })
     .template({ target: "#main_placeholder" })
 }
