@@ -1,7 +1,11 @@
 # intsa-server
 Application server to manage and view insights from auto-insta
 
-launch app - `python manage.py runserver 0.0.0.0:8000`
+## Setup
+1. `pip install -r requirements.txt`
+2. `yarn static-install`
+
+### Launch app - `python manage.py runserver 0.0.0.0:8000`
 
 apis:
 
