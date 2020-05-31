@@ -42,7 +42,8 @@ let tab = parse_url().searchKey.tab || "info"
 const tab_map = {
   info: plot_info,
   chart: plot_chart,
-  smart_log: plot_smart_log
+  smart_log: plot_smart_log,
+  daily_log: plot_daily_log
 }
 
 $(window).on('load', function () {
@@ -118,8 +119,9 @@ function update_btn_color() {
 
 
 function get_smart_chart(date) {
+  let url = (tab == "smart_log") ? "get_smart_log" : "get_daily_log"
   $.ajax({
-    url: "get_smart_log",
+    url: url,
     method: "GET",
     dataType: 'json',
     data: { date: date }
@@ -133,6 +135,7 @@ function get_smart_chart(date) {
 function make_calendar() {
   $.ajax({
     url: "get_calendar_dates",
+    data: { tab: tab },
     method: "GET",
     dataType: 'json',
   })
@@ -190,6 +193,15 @@ function plot_chart() {
 
 function plot_smart_log() {
   $('#smart_log_template')
+    .one('template', function () {
+      make_calendar()
+    })
+    .template({ target: "#main_placeholder" })
+}
+
+
+function plot_daily_log() {
+  $('#daily_log_template')
     .one('template', function () {
       make_calendar()
     })

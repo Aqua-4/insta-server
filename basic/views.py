@@ -93,12 +93,25 @@ def get_visual(request):
 def get_calendar_dates(request):
     f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
     db_conn = sqlite3.connect(f_path)
-    log_df = pd.read_sql(f"""select session_start from smartlog """, db_conn)
-    log_df['session_start'] = pd.to_datetime(
-        log_df['session_start']).dt.strftime("%Y-%m-%d")
-    dates = list(log_df['session_start'].unique())
-    min = log_df['session_start'].min()
-    max = log_df['session_start'].max()
+
+    if request.GET.get('tab') == 'smart_log':
+        log_df = pd.read_sql(
+            f"""select session_start from smartlog ORDER BY session_start""", db_conn)
+        log_df['session_start'] = pd.to_datetime(
+            log_df['session_start']).dt.strftime("%Y-%m-%d")
+        dates = list(log_df['session_start'].unique())
+        min = log_df['session_start'].min()
+        max = log_df['session_start'].max()
+    else:
+        log_df = pd.read_sql(
+            f"""select timestamp from instaDB
+            WHERE bot_lead=1 AND (followers=1 OR following=1)
+            ORDER BY timestamp""", db_conn)
+        log_df['timestamp'] = pd.to_datetime(
+            log_df['timestamp']).dt.strftime("%Y-%m-%d")
+        dates = list(log_df['timestamp'].unique())
+        min = log_df['timestamp'].min()
+        max = log_df['timestamp'].max()
     return JsonResponse({'dates': dates, 'min': min, 'max': max})
 
 
@@ -116,6 +129,30 @@ def get_smart_log(request):
 
     log_df.plot(title="Smart Log", kind='bar', x='session_start',
                 y=['delta_followers_cnt', 'delta_following_cnt'], rot=15)
+    plt.tight_layout()
+
+    figfile = BytesIO()
+    plt.savefig(figfile, format='png')
+
+    pngImageB64String = "data:image/png;base64,"
+    pngImageB64String += base64.b64encode(figfile.getvalue()).decode('utf8')
+
+    return JsonResponse({'img': pngImageB64String})
+
+
+def get_daily_log(request):
+    f_path = os.path.join("..", "auto-insta", 'auto-insta.db')
+    db_conn = sqlite3.connect(f_path)
+    date = request.GET.get('date', '2020-05-22')
+
+    log_df = pd.read_sql(f"""SELECT * FROM instaDB
+                        WHERE timestamp='{date}' AND bot_lead=1
+                        AND (followers=1 OR following=1)
+                        """, db_conn)
+    print(log_df)
+    log_df.plot(title="Bot Action", kind='bar', stacked=True,
+                x='hash_tag', y=['followers', 'following'], rot=90)
+
     plt.tight_layout()
 
     figfile = BytesIO()
