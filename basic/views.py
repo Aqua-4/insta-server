@@ -123,21 +123,13 @@ def get_smart_log(request):
     log_df = pd.read_sql(f"""select * from smartlog
                         where session_start LIKE '{date}%'
                         """, db_conn)
-
     log_df['session_start'] = pd.to_datetime(
         log_df['session_start']).dt.strftime("%I:%M %p")
-
     log_df.plot(title="Smart Log", kind='bar', x='session_start',
                 y=['delta_followers_cnt', 'delta_following_cnt'], rot=15)
+
     plt.tight_layout()
-
-    figfile = BytesIO()
-    plt.savefig(figfile, format='png')
-
-    pngImageB64String = "data:image/png;base64,"
-    pngImageB64String += base64.b64encode(figfile.getvalue()).decode('utf8')
-
-    return JsonResponse({'img': pngImageB64String})
+    return JsonResponse({'img': _get_bs64(plt)})
 
 
 def get_daily_log(request):
@@ -149,16 +141,15 @@ def get_daily_log(request):
                         WHERE timestamp='{date}' AND bot_lead=1
                         AND (followers=1 OR following=1)
                         """, db_conn)
-    print(log_df)
     log_df.plot(title="Bot Action", kind='bar', stacked=True,
                 x='hash_tag', y=['followers', 'following'], rot=90)
-
     plt.tight_layout()
+    return JsonResponse({'img': _get_bs64(plt)})
 
+
+def _get_bs64(plt):
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
-
     pngImageB64String = "data:image/png;base64,"
     pngImageB64String += base64.b64encode(figfile.getvalue()).decode('utf8')
-
-    return JsonResponse({'img': pngImageB64String})
+    return pngImageB64String
